@@ -4,20 +4,45 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic-Tack_Toe</title>
+    <title>Tic-Tack-Toe</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="gameBoard">
-        <div class="gameCell"></div>
-        <div class="gameCell"></div>
-        <div class="gameCell"></div>
-        <div class="gameCell"></div>
-        <div class="gameCell"></div>
-        <div class="gameCell"></div>
-        <div class="gameCell"></div>
-        <div class="gameCell"></div>
-        <div class="gameCell"></div>
+    <header>
+        <h1>Tic-Tac-Toe</h1>
+    </header>
+    <main>
+        <div class="playerOne">
+            <h2>Player 1</h2>
+            <h4>Score:0</h4>
+        </div>
+        <div class="gameBoard">
+            <div class="gameCell"></div>
+            <div class="gameCell"></div>
+            <div class="gameCell"></div>
+            <div class="gameCell"></div>
+            <div class="gameCell"></div>
+            <div class="gameCell"></div>
+            <div class="gameCell"></div>
+            <div class="gameCell"></div>
+            <div class="gameCell"></div>
+        </div>
+        <div class="playerTwo">
+            <h2>Player 2</h2>
+            <h4>Score:0</h4>
+        </div>
+    </main>
+    <footer>
+        <p>
+            Copyright ©
+        <script>  document.write(new Date().getFullYear())</script>
+        Ritish Kandel
+        </p>
+    </footer> 
+    <div class="overlay"></div>
+    <div class="buttonClump">
+        <button class="onePlayer">One Player</button>
+        <button class="twoPlayer">Two Player</button>
     </div>
 </body>
 </html>
