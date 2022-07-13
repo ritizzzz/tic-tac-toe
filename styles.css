@@ -41,25 +41,34 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
-.gameBoard{
-    display: grid;
-    grid-template-columns: 200px 200px 200px;
-    grid-template-rows: 200px 200px 200px;
-}
-
 
 body{
     display: grid;
     grid-template-rows: max-content auto max-content;
     width: 100%;
     position: relative;
-    min-height: 100vh;
+    height: 100vh;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 header, footer{
     background-color: black;
+    color: white;
+    display: flex;
+    justify-content: center;
+    padding: 25px 0px;
 }
+
+main{
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 4fr 1fr;
+    align-items: center;
+    justify-items: center;
+    
+}
+
+
 .overlay{
     position: absolute;
 }
@@ -73,6 +82,13 @@ header, footer{
     top: 0;
     bottom: 0;
     margin: auto;
+}
+
+
+.gameBoard{
+    display: grid;
+    grid-template-columns: max(100px, 12vw) max(100px, 12vw) max(100px, 12vw); 
+    grid-template-rows: max(100px, 12vw) max(100px, 12vw) max(100px, 12vw);
 }
 
 .gameCell{
