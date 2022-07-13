@@ -41,3 +41,23 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
+.gameBoard{
+    display: grid;
+    grid-template-columns: 200px 200px 200px;
+    grid-template-rows: 200px 200px 200px;
+}
+
+.gameCell{
+    border: 1px solid black;
+}
+
+.gameCell:nth-child(3n+1), .gameCell:nth-child(3n){
+    border-left: none;
+    border-right: none;
+}
+.gameCell:nth-child(n-6){
+    border-top: none;
+}
+.gameCell:nth-child(n+7){
+    border-bottom: none;
+}
