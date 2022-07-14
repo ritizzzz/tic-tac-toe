@@ -84,6 +84,21 @@ main{
     margin: auto;
 }
 
+.overlayActive{
+    width: 100%;
+    height: 100%;
+    background-color: #313030;
+    opacity: 0.5;
+}
+
+
+button{
+    background-color: #3882f6;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+    border: none;
+}
 
 .gameBoard{
     display: grid;
