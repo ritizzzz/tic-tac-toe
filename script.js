@@ -1,3 +1,5 @@
+
+
 const elements = (function(){
     const gameCells = document.querySelectorAll('.gameCell');
     const onePlayerButton = document.querySelector('.onePlayer');
@@ -9,10 +11,71 @@ const elements = (function(){
     return{gameCells, onePlayerButton, twoPlayerButton, buttonClump, overlay, playerOneDisplay, playerTwoDisplay}
 })();
 
-const player = function(name, symbol){
-    let score = 0;
-    return {name, symbol, score};
-}
+
+const gameBoard = (function() {
+    let board = [];    
+    const _renderBoard = function(){
+        for(let i = 0; i<elements.gameCells.length; i++){
+            if(board[i] !== undefined){
+               elements.gameCells[i].innerText = board[i];
+            }
+        }
+        checkWinner();
+    }    
+    const updateBoard = function(index, symbol){
+        board[index] = symbol;
+        _renderBoard();
+    }
+    return {updateBoard, board}
+})();
+
+
+const eventsHandler = (function(){
+    const _removeButtonsAndOverlay = function(){
+        elements.buttonClump.style.display = 'none';
+        elements.overlay.classList.remove('overlayActive');
+        removeEventFromButton();
+        addEventTOBoard();
+    };
+    const _twoPlayer = function(){
+        _removeButtonsAndOverlay();
+        const playerOne = player('Player1', 'X');
+        const playerTwo = player('Player2', 'O');
+        return {playerOne, playerTwo}
+    };
+    const _onePlayer = function(){
+        _removeButtonsAndOverlay();
+        const playerOne = player('Player1', 'X');
+        const bot = player('bot', 'O');
+        return {playerOne, bot}
+    }
+
+    const addEventToButton = function(){
+        elements.onePlayerButton.addEventListener('click', _onePlayer);
+        elements.twoPlayerButton.addEventListener('click', _twoPlayer);   
+    };
+    const removeEventFromButton = function(){
+        elements.onePlayerButton.removeEventListener('click', _onePlayer);
+        elements.twoPlayerButton.removeEventListener('click', _twoPlayer);
+    };
+    const addEventTOBoard = function(){
+        elements.gameCells.forEach(gameCell => {
+
+             gameCell.addEventListener('click', gameBoard.updateBoard.bind(gameCell, gameCell.getAttribute('data-index'), 'X'))
+        });
+    };
+    const removeEventFromBoard = function(){
+        elements.gameCells.forEach(gamecell => {
+            gamecell.removeEventListener('click', gameBoard.updateBoard);
+        })
+    }
+    return{addEventToButton, removeEventFromButton, addEventTOBoard, removeEventFromBoard}
+})();
+
+
+
+
+
 const checkWinner = function(){
     const board = gameBoard.board;
     for(let i = 0; i<board.length; i++){
@@ -41,65 +104,26 @@ const checkWinner = function(){
     }
 }
 
-const gameBoard = (function() {
-    let board = [];
-    
-    
-    const renderBoard = function(){
-        for(let i = 0; i<elements.gameCells.length; i++){
-            if(board[i] !== undefined){
-               elements.gameCells[i].innerText = board[i];
-            }
+const player = function(name, symbol){
+    let score = 0;
+
+    const _drawnOn = function(index){
+       if(elements.gameCells[index].innerText  === ''){
+           return false;
+       }else{
+           return true;
+       }
+    }
+
+    const draw = function(index){
+        if(!_drawnOn(index)){
+          elements.gameCells[index].innerText = this.symbol;
         }
-        checkWinner();
-    }    
-    const updateBoard = function(index, symbol){
-        board[index] = symbol;
-        renderBoard();
     }
-    return {updateBoard, board}
-})();
+    return {name, symbol, score, draw};
+}
 
-const eventsHandler = (function(){
-    const addEventToButton = function(){
-        elements.onePlayerButton.addEventListener('click', domUpdates.updateOnePlayer);
-        elements.twoPlayerButton.addEventListener('click', domUpdates.updateTwoPlayer);   
-    };
-    const removeEventFromButton = function(){
-        elements.onePlayerButton.removeEventListener('click', domUpdates.updateOnePlayer);
-        elements.twoPlayerButton.removeEventListener('click', domUpdates.updateTwoPlayer);
-    };
-    const addEventTOBoard = function(){
-        elements.gameCells.forEach(gameCell => {
 
-             gameCell.addEventListener('click', gameBoard.updateBoard.bind(gameCell, gameCell.getAttribute('data-index'), 'X'))
-        });
-    };
-    const removeEventFromBoard = function(){
-        elements.gameCells.forEach(gamecell => {
-            gamecell.removeEventListener('click', gameBoard.updateBoard);
-        })
-    }
-    return{addEventToButton, removeEventFromButton, addEventTOBoard, removeEventFromBoard}
-})();
-
-const domUpdates = (function(){
-    const _removeButtonsAndOverlay = function(){
-        elements.buttonClump.style.display = 'none';
-        elements.overlay.classList.remove('overlayActive');
-    };
-    const updateOnePlayer = function(){
-        _removeButtonsAndOverlay();
-        eventsHandler.removeEventFromButton();
-        eventsHandler.addEventTOBoard();
-        elements.playerTwoDisplay.firstElementChild.innerText = 'Bot';
-    };
-    const updateTwoPlayer = function(){
-        _removeButtonsAndOverlay();
-        eventsHandler.removeEventFromButton();
-        eventsHandler.addEventTOBoard();
-    };
-    return{updateOnePlayer, updateTwoPlayer};
-})();
 
 eventsHandler.addEventToButton();
+
