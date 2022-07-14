@@ -108,6 +108,10 @@ button{
 
 .gameCell{
     border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 8rem;
 }
 
 .gameCell:nth-child(3n+1), .gameCell:nth-child(3n){
