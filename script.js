@@ -13,11 +13,11 @@ const _elements = (function(){
 
 
 const gameBoard = (function() {
-    let board = [];    
+    let _board = [];    
     const _renderDisplay = function(){
         for(let i = 0; i<_elements.gameCells.length; i++){
-            if(board[i] !== undefined){
-                _elements.gameCells[i].innerText = board[i];
+            if(_board[i] !== undefined){
+                _elements.gameCells[i].innerText = _board[i];
             }  
         }
     }    
@@ -27,11 +27,19 @@ const gameBoard = (function() {
             gameCell.innerText = '';
         })
     }
+
+    const emptyBoard = function(){
+        _board = [];
+    }
    
  
     const updateBoard = function(index, symbol){
-         board[index] = symbol;
+         _board[index] = symbol;
         _renderDisplay();
+    }
+
+    const getBoard = function(){
+        return _board;
     }
 
     const declareWinner = function(text){
@@ -45,7 +53,7 @@ const gameBoard = (function() {
        _elements.playerTwoDisplay.lastElementChild.innerText = `score: ${players[1].score}`;
     }
 
-    return {updateBoard, board, emptyDisplay, declareWinner, renderPlayerDisplay}
+    return {updateBoard, emptyDisplay, declareWinner, renderPlayerDisplay, emptyBoard, getBoard}
 })();
 
 
@@ -53,7 +61,7 @@ const player = function(name, symbol){
     let score = 0;
 
     const _drawnOn = function(index){
-       if( gameBoard.board[index] === undefined){
+       if( gameBoard.getBoard()[index] === undefined){
            return false;
        }else{
            return true;
@@ -63,7 +71,9 @@ const player = function(name, symbol){
     const draw = function(index){
         if(!_drawnOn(index)){
             gameBoard.updateBoard(index, this.symbol);
+            return true;
         }
+
     }
     return {name, symbol, score, draw};
 }
@@ -75,23 +85,40 @@ const choosePlayType = (function(){
         _elements.buttonClump.style.display = 'none';
         _elements.overlay.classList.remove('overlayActive');
         _removeEventFromButton();
+        gameBoard.emptyDisplay();
         gameFlow.init();
     };
 
+    const _addButtonsAndOverlay = function(){
+        if(_elements.buttonClump.childElementCount !== 3){
+            let button = document.createElement('button');
+            button.innerText = 'Play Again';
+            button.addEventListener('click', _removeButtonsAndOverlay);
+            _elements.buttonClump.appendChild(button);
+        }
+        _elements.buttonClump.style.display = 'block';
+        _elements.overlay.classList.add('overlayActive');
+        addEventsToButtons();
+    }
+
     const init = function(){
-        addButtonsAndOverlay();
+        _addButtonsAndOverlay();
     }
   
     const _twoPlayer = function(){
+        players = [];
         const playerOne = player('Player1', 'X');
         const playerTwo = player('Player2', 'O');
-        players.push(playerOne, playerTwo);
+        players.push(playerOne, playerTwo);    
+        gameBoard.renderPlayerDisplay();
         _removeButtonsAndOverlay();
     };
     const _onePlayer = function(){
+        players = [];
         const playerOne = player('Player1', 'X');
         const bot = player('bot', 'O');
         players.push(playerOne, bot);
+        gameBoard.renderPlayerDisplay();
         _removeButtonsAndOverlay();
     };
  
@@ -108,7 +135,7 @@ const choosePlayType = (function(){
 
 
     addEventsToButtons();
-    return {init};
+    return {init, addEventsToButtons};
 })();
 
 
@@ -117,7 +144,7 @@ const gameFlow = (function(){
     let _turnTracker = 0;
 
     const returnResult = function(){
-        const board = gameBoard.board;
+        const board = gameBoard.getBoard();
         for(let i = 0; i<board.length; i++){
             if(board[i] !== undefined){
                 if(i == 0 || i == 3 || i == 6){
@@ -168,18 +195,19 @@ const gameFlow = (function(){
     }
 
     const _makeMove = function(event){
-        players[_turnTracker].draw(event.target.getAttribute('data-index'));
-        if(_turnTracker){
-            _turnTracker -= 1;
-        }else{
-            _turnTracker += 1;
-            if(players[_turnTracker].name === 'bot'){
-                _removeFromGameCells();
+        if(players[_turnTracker].draw(event.target.getAttribute('data-index'))){
+            if(_turnTracker){
+                _turnTracker -= 1;
+            }else{
+                _turnTracker += 1;
+                if(players[_turnTracker].name === 'bot'){
+                    _removeFromGameCells();
+                }
             }
-        }
-        if(returnResult()){
-            _removeFromGameCells();
-            endGame.init(returnResult());
+            if(returnResult()){
+                _removeFromGameCells();
+                endGame.init(returnResult());
+            }
         }
     }
 
@@ -200,7 +228,11 @@ const endGame = (function(){
                 }
             }
         }
+        choosePlayType.init();
+        gameBoard.emptyBoard();
     }
+
+
     return {init};
 })();
 
