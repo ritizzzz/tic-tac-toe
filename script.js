@@ -1,4 +1,4 @@
-
+let players = [];
 const _elements = (function(){
     const gameCells = document.querySelectorAll('.gameCell');
     const onePlayerButton = document.querySelector('.onePlayer');
@@ -7,7 +7,8 @@ const _elements = (function(){
     const overlay = document.querySelector('.overlay');
     const playerOneDisplay = document.querySelector('.playerOne');
     const playerTwoDisplay = document.querySelector('.playerTwo');
-    return{gameCells, onePlayerButton, twoPlayerButton, buttonClump, overlay, playerOneDisplay, playerTwoDisplay}
+    const winnerDeclaration = document.querySelector('.winnerDeclaration');
+    return{gameCells, onePlayerButton, twoPlayerButton, buttonClump, overlay, playerOneDisplay, playerTwoDisplay, winnerDeclaration};
 })();
 
 
@@ -33,7 +34,18 @@ const gameBoard = (function() {
         _renderDisplay();
     }
 
-    return {updateBoard, board, emptyDisplay}
+    const declareWinner = function(text){
+        _elements.winnerDeclaration.innerText = text;
+    }
+
+    const renderPlayerDisplay = function(){
+        _elements.playerOneDisplay.firstElementChild.innerText = players[0].name;
+       _elements.playerOneDisplay.lastElementChild.innerText = `Score: ${players[0].score}`;
+       _elements.playerTwoDisplay.firstElementChild.innerText = players[1].name;
+       _elements.playerTwoDisplay.lastElementChild.innerText = `score: ${players[1].score}`;
+    }
+
+    return {updateBoard, board, emptyDisplay, declareWinner, renderPlayerDisplay}
 })();
 
 
@@ -58,7 +70,6 @@ const player = function(name, symbol){
 
 
 const choosePlayType = (function(){
-    let players = [];
  
     const _removeButtonsAndOverlay = function(){
         _elements.buttonClump.style.display = 'none';
@@ -66,6 +77,10 @@ const choosePlayType = (function(){
         _removeEventFromButton();
         gameFlow.init();
     };
+
+    const init = function(){
+        addButtonsAndOverlay();
+    }
   
     const _twoPlayer = function(){
         const playerOne = player('Player1', 'X');
@@ -93,13 +108,12 @@ const choosePlayType = (function(){
 
 
     addEventsToButtons();
-    return{players}
+    return {init};
 })();
 
 
 
 const gameFlow = (function(){
-    let _players = [];
     let _turnTracker = 0;
 
     const returnResult = function(){
@@ -135,7 +149,6 @@ const gameFlow = (function(){
     };
 
     const init = function(){
-        _players.push(...choosePlayType.players);
         _turnTracker = 0;
         _eventToGameCells();
     }
@@ -155,12 +168,12 @@ const gameFlow = (function(){
     }
 
     const _makeMove = function(event){
-        _players[_turnTracker].draw(event.target.getAttribute('data-index'));
+        players[_turnTracker].draw(event.target.getAttribute('data-index'));
         if(_turnTracker){
             _turnTracker -= 1;
         }else{
             _turnTracker += 1;
-            if(_players[_turnTracker].name === 'bot'){
+            if(players[_turnTracker].name === 'bot'){
                 _removeFromGameCells();
             }
         }
@@ -176,9 +189,19 @@ const gameFlow = (function(){
 
 const endGame = (function(){
     const init = function(result){
-        
+        if(result === 'tie'){
+            gameBoard.declareWinner("It's a tie!!");
+        }else{
+            for(let i = 0; i<players.length; i++){
+                if(players[i].symbol === result){
+                    players[i].score += 1;
+                    gameBoard.renderPlayerDisplay();
+                    gameBoard.declareWinner(`The winner is ${players[i].name}(${players[i].symbol})`);
+                }
+            }
+        }
     }
-    return{init};
+    return {init};
 })();
 
 
