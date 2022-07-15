@@ -196,23 +196,48 @@ const gameFlow = (function(){
 
     const _makeMove = function(event){
         if(players[_turnTracker].draw(event.target.getAttribute('data-index'))){
-            if(_turnTracker){
-                _turnTracker -= 1;
-            }else{
-                _turnTracker += 1;
-                if(players[_turnTracker].name === 'bot'){
-                    _removeFromGameCells();
-                }
-            }
             if(returnResult()){
                 _removeFromGameCells();
                 endGame.init(returnResult());
+            }else{
+                if(_turnTracker){
+                    _turnTracker -= 1;
+                }else{
+                    _turnTracker += 1;
+                    if(players[_turnTracker].name === 'bot'){
+                        _removeFromGameCells();
+                        _makeBotMove();
+                        if(returnResult()){
+                            _removeFromGameCells();
+                            endGame.init(returnResult());
+                        }
+                        _turnTracker -= 1;
+                    }
+                }    
+            }  
+        }
+    }
+
+    const _makeBotMove = function(){
+        const botBoard = ['', '', '', '', '', '', '', '', ''];
+        let availableMoves = [];
+        for(let i = 0; i<botBoard.length; i++){
+            if(gameBoard.getBoard()[i] !== undefined){
+                botBoard.splice(i, 1, gameBoard.getBoard()[i]);
+            }
+            if(botBoard[i] == ''){
+                availableMoves.push(i);
             }
         }
+        const index = availableMoves[Math.floor(Math.random()*availableMoves.length)];
+        players[1].draw(index);
+        _eventToGameCells();
     }
 
     return {init};
 })();
+
+
 
 
 const endGame = (function(){
