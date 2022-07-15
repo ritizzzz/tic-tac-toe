@@ -13,19 +13,27 @@ const _elements = (function(){
 
 const gameBoard = (function() {
     let board = [];    
-    const _renderBoard = function(){
+    const _renderDisplay = function(){
         for(let i = 0; i<_elements.gameCells.length; i++){
             if(board[i] !== undefined){
                 _elements.gameCells[i].innerText = board[i];
-            }
+            }  
         }
-        // checkWinner();
     }    
-    const updateBoard = function(index, symbol){
-        board[index] = symbol;
-        _renderBoard();
+
+    const emptyDisplay = function(){
+        _elements.gameCells.forEach(gameCell => {
+            gameCell.innerText = '';
+        })
     }
-    return {updateBoard, board}
+   
+ 
+    const updateBoard = function(index, symbol){
+         board[index] = symbol;
+        _renderDisplay();
+    }
+
+    return {updateBoard, board, emptyDisplay}
 })();
 
 
@@ -94,7 +102,7 @@ const gameFlow = (function(){
     let _players = [];
     let _turnTracker = 0;
 
-    const checkWinner = function(){
+    const returnResult = function(){
         const board = gameBoard.board;
         for(let i = 0; i<board.length; i++){
             if(board[i] !== undefined){
@@ -139,6 +147,7 @@ const gameFlow = (function(){
         });
     }
 
+
     const _removeFromGameCells = function(){
         _elements.gameCells.forEach(gamecell => {
             gamecell.removeEventListener('click', _makeMove);
@@ -155,14 +164,22 @@ const gameFlow = (function(){
                 _removeFromGameCells();
             }
         }
+        if(returnResult()){
+            _removeFromGameCells();
+            endGame.init(returnResult());
+        }
     }
 
     return {init};
 })();
 
 
-
-
+const endGame = (function(){
+    const init = function(result){
+        
+    }
+    return{init};
+})();
 
 
 
