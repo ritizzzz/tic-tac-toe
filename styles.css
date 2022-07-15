@@ -62,12 +62,20 @@ header, footer{
 main{
     padding: 20px;
     display: grid;
-    grid-template-columns: 1fr 4fr 1fr;
-    align-items: center;
+    grid-template-rows: max-content auto;
     justify-items: center;
-    
+    align-content: center;
+    row-gap: 10px;
 }
-
+.bottom{
+    display: grid;
+    grid-template-columns: 1fr 4fr 1fr;
+    align-items: top;
+    height: max-content;
+}
+.playerOne, .playerTwo{
+    align-self: center;
+}
 
 .overlay{
     position: absolute;
